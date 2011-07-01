@@ -27,6 +27,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.util.Version;
 
+import utils.Constants;
 import utils.PathMaker;
 
 /**
@@ -49,11 +50,8 @@ public class LuceneIndexer {
 	};
 	// added by me: rt, http
 	
-	public static final String INDEX_DIRECTORY = "INDEX";
-	public static final String FILES_TO_INDEX_DIRECTORY = "TRENDS";
-	
-	public static final String FIELD_NAME_PATH     = "path";
-	public static final String FIELD_NAME_CONTENTS = "contents";
+	private static final String FIELD_NAME_PATH     = "path";
+	private static final String FIELD_NAME_CONTENTS = "contents";
 
 
 	private static HashSet<String> getStopWords() {
@@ -66,9 +64,9 @@ public class LuceneIndexer {
     
     private static void createIndex(String searctString) throws CorruptIndexException, LockObtainFailedException, IOException {
 		Analyzer analyzer = new StandardAnalyzer(LUCENE_2_9_4, getStopWords());
-		File toIndexDir = new File(PathMaker.path(FILES_TO_INDEX_DIRECTORY, searctString));
+		File toIndexDir = new File(PathMaker.path(Constants.FILES_TO_INDEX_DIRECTORY, searctString));
 		
-		File destination = new File(PathMaker.path(INDEX_DIRECTORY, searctString));
+		File destination = new File(PathMaker.path(Constants.INDEX_DIRECTORY, searctString));
 		Directory indexDir = FSDirectory.open(destination);
 
 		IndexWriter indexWriter = new IndexWriter(indexDir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
@@ -98,7 +96,7 @@ public class LuceneIndexer {
     public static String [] getTopWords(int numberOfResults, String searchString) {
     	
     	
-    	File index = new File(PathMaker.path(INDEX_DIRECTORY, searchString));
+    	File index = new File(PathMaker.path(Constants.INDEX_DIRECTORY, searchString));
     	index.mkdir();
     	
     	LinkedList<IndexPair> topResults = new LinkedList<IndexPair>();

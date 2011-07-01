@@ -19,6 +19,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.BasicAuthorization;
+import utils.Constants;
 import utils.PathMaker;
 
 /**
@@ -52,8 +53,12 @@ public class TweetCollector extends TimerTask {
 	public TweetCollector (String searchString, int totalTime, int waitTime,
 						   BasicAuthorization profile, JTextArea resultBox) {
 		this.output = null;
-		
-		String path = PathMaker.path(LuceneIndexer.FILES_TO_INDEX_DIRECTORY, searchString);
+		String root = Constants.FILES_TO_INDEX_DIRECTORY;
+		File toIndexRoot = new File(root);
+		if (!toIndexRoot.exists()) {
+			toIndexRoot.mkdir();
+		}		
+		String path = PathMaker.path(Constants.FILES_TO_INDEX_DIRECTORY, searchString);
 		File directory = new File(path);
 		if (!directory.exists()) {
 			directory.mkdir();
