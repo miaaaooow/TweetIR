@@ -16,6 +16,7 @@ import twitter4j.Location;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.ResponseList;
+import twitter4j.Status;
 import twitter4j.Trend;
 import twitter4j.Trends;
 import twitter4j.Tweet;
@@ -27,8 +28,6 @@ import utils.Constants;
 
 
 public class TwitterCommunicator {
-	
-	public final static int CORRESPONDING_TWEETS = 15;
 	
 	private final static String USER = "IGenunelyRock";
 	private final static String PASS = "mariamatevarocks";
@@ -59,6 +58,29 @@ public class TwitterCommunicator {
 		return sb;
 	}
 	
+	/**
+	 * Search all available tweets by a user.
+	 * @param username
+	 * @return
+	 */
+	public static String[] searchUser(String username) {
+		TwitterFactory tf = new TwitterFactory();
+		Twitter twitter = tf.getInstance();	
+		String[] result = null;
+		try {
+			ResponseList<Status> statuses = twitter.getUserTimeline(username);
+			Iterator<Status> it = statuses.iterator();
+			int i = 0;
+			while(it.hasNext()) {
+				result[i] = it.next().getText();
+				i++;
+			}
+		}
+		catch (TwitterException twe) {
+			twe.printStackTrace();
+		}
+		return result;
+	}
 	
 	/**
 	 * Searches a string for a certain period of time
@@ -71,7 +93,7 @@ public class TwitterCommunicator {
 		BasicAuthorization profile = new BasicAuthorization(USER, PASS);
 		TweetCollector tweetsCollector = new TweetCollector(searchString, totalSearchTime, waitTime, profile, resultBox);
 		tweetsCollector.run();
-		String [] correspondingWords = LuceneIndexer.getTopWords(CORRESPONDING_TWEETS, searchString);
+		String [] correspondingWords = LuceneIndexer.getTopWords(Constants.CORRESPONDING_TWEETS, searchString);
 		return correspondingWords;
 	}
 	
@@ -148,11 +170,11 @@ public class TwitterCommunicator {
 	public static String [][] getCorrespondingStrings(String [] trends, int totalSearchTime, int waitTime) {
 		BasicAuthorization auth = new BasicAuthorization(USER, PASS);
 		int len = trends.length;
-		String [][] result = new String[len][CORRESPONDING_TWEETS];
+		String [][] result = new String[len][Constants.CORRESPONDING_TWEETS];
 		for (int i = 0; i < len - 1; i++) { // the last one is the location name
 			TweetCollector tc = new TweetCollector(trends[i], totalSearchTime, waitTime, auth, null);
 			tc.run();
-			String [] topWords = LuceneIndexer.getTopWords(CORRESPONDING_TWEETS, trends[i]);
+			String [] topWords = LuceneIndexer.getTopWords(Constants.CORRESPONDING_TWEETS, trends[i]);
 			for (int j = 0; j < topWords.length; j++) {
 				result[i][j] = topWords[j];
 				System.out.println(topWords[j]);				                       

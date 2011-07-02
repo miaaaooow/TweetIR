@@ -44,11 +44,11 @@ public class LuceneIndexer {
 	public static final String[] ENGLISH_STOP_WORDS = {
 		"a", "an", "and", "are", "as", "at", "be", "but", "by",
 		"for", "http", "if", "in", "into", "is", "it",
-		"no", "not", "of", "on", "or", "rt", "such",
+		"no", "not", "of", "on", "or", "rt", "so", "such",
 		"that", "the", "their", "then", "there", "these",
 		"they", "this", "to", "was", "will", "with"
 	};
-	// added by me: rt, http
+	// added by me: rt, http, so
 	
 	private static final String FIELD_NAME_PATH     = "path";
 	private static final String FIELD_NAME_CONTENTS = "contents";
@@ -123,7 +123,7 @@ public class LuceneIndexer {
 	    	while (allWords.next()) {
 	    		// Counting word occurrences
 	    		Term term = allWords.term();
-	    		if (term.equals(searchString.toLowerCase())) {
+	    		if (term.text().equals(searchString.toLowerCase()) || term.text().length() == 1) {
 	    			continue;
 	    		}
 	    		
