@@ -66,6 +66,13 @@ public class LuceneIndexer {
 		Analyzer analyzer = new StandardAnalyzer(LUCENE_2_9_4, getStopWords());
 		File toIndexDir = new File(PathMaker.path(Constants.FILES_TO_INDEX_DIRECTORY, searctString));
 		
+		//create index folder if it does not exist
+		String root = Constants.INDEX_DIRECTORY;
+		File indexRoot = new File(root);
+		if (!indexRoot.exists()) {
+			indexRoot.mkdir();
+		}	
+		
 		File destination = new File(PathMaker.path(Constants.INDEX_DIRECTORY, searctString));
 		Directory indexDir = FSDirectory.open(destination);
 

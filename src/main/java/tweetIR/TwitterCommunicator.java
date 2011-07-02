@@ -12,8 +12,10 @@ import java.util.List;
 
 import javax.swing.JTextArea;
 
+import twitter4j.Location;
 import twitter4j.Query;
 import twitter4j.QueryResult;
+import twitter4j.ResponseList;
 import twitter4j.Trend;
 import twitter4j.Trends;
 import twitter4j.Tweet;
@@ -26,7 +28,7 @@ import utils.Constants;
 
 public class TwitterCommunicator {
 	
-	public final static int CORRESPONDING_TWEETS = 10;
+	public final static int CORRESPONDING_TWEETS = 15;
 	
 	private final static String USER = "IGenunelyRock";
 	private final static String PASS = "mariamatevarocks";
@@ -69,12 +71,34 @@ public class TwitterCommunicator {
 		BasicAuthorization profile = new BasicAuthorization(USER, PASS);
 		TweetCollector tweetsCollector = new TweetCollector(searchString, totalSearchTime, waitTime, profile, resultBox);
 		tweetsCollector.run();
-		String [] searchStr = new String[2];
-		searchStr[0] = searchString;
-		String [][] results = getCorrespondingStrings(searchStr, totalSearchTime, waitTime);	
-		return results[0];
+		String [] correspondingWords = LuceneIndexer.getTopWords(CORRESPONDING_TWEETS, searchString);
+		return correspondingWords;
 	}
 	
+	/**
+	 * Takes out available Locations for trending topics
+	 * @return ResponseList of the twitter4j type Location
+	 */
+	public static Location [] getAvailableLocations () {
+		TwitterFactory tf = new TwitterFactory();
+		Twitter twitter = tf.getInstance();	
+		Location [] result = new Location[1];
+		ResponseList<Location> rl = null;
+		int i = 0;
+		try {
+			rl = twitter.getAvailableTrends();
+			result = new Location[rl.size()];
+			Iterator<Location> it = rl.iterator();
+			while (it.hasNext()) {
+				result[i] = it.next();
+				i++;
+			}
+		}
+		catch (TwitterException twe) {
+			twe.printStackTrace();
+		}
+		return result;
+	}
 	
 	/**
 	 * The method extracts the current trending topics (top 10)
@@ -82,20 +106,20 @@ public class TwitterCommunicator {
 	 * @return a list of the trending topics strings
 	 * NOTE: this method is discouraged to be used quite often as 
 	 */
-	public static String [] getTrendingTopics (int location) {
+	public static String [] getTrendingTopics (Location location) {
 		TwitterFactory tf = new TwitterFactory();
-		Twitter twitter = tf.getInstance();
+		Twitter twitter = tf.getInstance();		
 		String result [] = new String [1];
 		try {
 			Trends currentTrends;
 			String locationName;
-			if (location == Constants.DEFAULT_LOCATION){
+			if (location == null){
 				currentTrends = twitter.getCurrentTrends();
 				locationName = "World";
 			}
 			else {
-				currentTrends = twitter.getLocationTrends(location);
-				locationName = currentTrends.getLocation().getCountryName() + " " + currentTrends.getLocation().getName();
+				currentTrends = twitter.getLocationTrends(location.getWoeid());
+				locationName = location.getCountryName() + ", " + location.getName();
 			}
 			
 			Trend [] trendsContent = currentTrends.getTrends();
@@ -114,6 +138,13 @@ public class TwitterCommunicator {
 		return result;
 	}
 	
+	/**
+	 * Gets the corresponding top strings to an a array of trending topics
+	 * @param trends - the trending topics
+	 * @param totalSearchTime - total search time
+	 * @param waitTime - sleep time for new tweet request
+	 * @return
+	 */
 	public static String [][] getCorrespondingStrings(String [] trends, int totalSearchTime, int waitTime) {
 		BasicAuthorization auth = new BasicAuthorization(USER, PASS);
 		int len = trends.length;

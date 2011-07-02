@@ -15,12 +15,14 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import twitter4j.Location;
 import utils.Constants;
 
 public class Main extends JFrame {
@@ -30,7 +32,7 @@ public class Main extends JFrame {
 	
 	private final static int BOARDX 	= 1000;
 	private final static int BOARDY 	= 400;
-	private final static int BUTTONY 	= 60;	
+	private final static int BUTTONY 	= 70;	
 	
 	private final static String SEARCH  = "SEARCH";
 	private final static String SEARCH_LONG = "SEARCH_LONG";
@@ -42,8 +44,11 @@ public class Main extends JFrame {
 	private JTextField searchBox;
 	private JTextField totalTimeBox;
 	private JTextField waitBox;
-	private JTextField locationBox;
+	private JComboBox locationBox;
 	private JTextArea resultBox;
+	
+	private Location[] locations;
+	private int worldwideIndex = Constants.DEFAULT_LOCATION;
 	
 	private boolean startMode = true;
 	
@@ -57,6 +62,7 @@ public class Main extends JFrame {
 	          System.exit(0);
 	        }
 	      });
+	
 		setSize(BOARDX, BOARDY + BUTTONY);	
 		setVisible(true);
 		setFocusable(true);
@@ -87,7 +93,7 @@ public class Main extends JFrame {
 	 * Search for the trending topics
 	 */
 	public void searchTrendingTopics() {
-		int location  = getIntFromBox(locationBox, Constants.DEFAULT_LOCATION);
+		Location location = (Location) locations[locationBox.getSelectedIndex()];
 		int totalTime = getIntFromBox(totalTimeBox, Constants.DEFAULT_SEARCH_TIME);
 		int waitTime  = getIntFromBox(waitBox, Constants.TRENDING_SLEEP_TIME);
 		String[]   trends        = TwitterCommunicator.getTrendingTopics(location);
@@ -165,14 +171,14 @@ public class Main extends JFrame {
 		resultBox.setText(result);
 	}
 	
-	
 
 	public void clearFields () {
 		System.out.println("CLEAR!");	
 		searchBox.setText("");
 		totalTimeBox.setText("");
 		resultBox.setText("");
-		locationBox.setText("");
+		locationBox.setSelectedIndex(worldwideIndex);
+		waitBox.setText("");
 	}
 
 	public void paint(Graphics g) {
@@ -195,34 +201,39 @@ public class Main extends JFrame {
 		JPanel searchPanel = new JPanel();
 		searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
 		searchPanel.setSize(BOARDX, BUTTONY);
-		searchBox = createTextBox();
-		totalTimeBox = createTextBox();
-		waitBox = createTextBox();
-		locationBox = createTextBox();
+		searchBox = createTextBox(80);
+		totalTimeBox = createTextBox(50);
+		waitBox = createTextBox(50);
 		
 		JLabel jl1 = new JLabel("Search criteria: "); 
 		JLabel jl2 = new JLabel("Search time[ms]: "); 
 		JLabel jl3 = new JLabel("Wait Time[ms]: ");
-		JLabel jl4 = new JLabel("Trending location: ");
+
 		searchPanel.add(jl1); 
 		searchPanel.add(searchBox);
 		searchPanel.add(jl2);
 		searchPanel.add(totalTimeBox);
 		searchPanel.add(jl3);
 		searchPanel.add(waitBox);
-		searchPanel.add(jl4);
-		searchPanel.add(locationBox);
+
 		return searchPanel;
 	}
 	
-	private JPanel getResultBox() {
-		JPanel resultPanel = new JPanel();
-		resultBox = new JTextArea();
-		resultBox.setSize(BOARDX - 10, BOARDY - BUTTONY * 2);
-		resultBox.setColumns(90);
-		resultBox.setRows(31);
-		resultPanel.add(resultBox);
-		return resultPanel;
+	private JComboBox getLocationsCombo() {
+		locations = TwitterCommunicator.getAvailableLocations();
+		String[] appearance = null;
+		if (locations != null) { 
+			appearance = new String[locations.length ];
+			for (int i = 0; i < appearance.length; i++) {
+				appearance[i] = locations[i].getCountryName() + " > " + locations[i].getName();
+				if (locations[i].getName() == "Worldwide") {
+					worldwideIndex = i;
+				}
+			}
+		}
+		JComboBox jcb = new JComboBox(appearance);
+		jcb.setSelectedIndex(worldwideIndex);
+		return jcb;
 	}
 	
 	private JPanel getButtonPanel() {
@@ -251,15 +262,17 @@ public class Main extends JFrame {
 		};		
 		
 		/** UI components arangement **/
-		
+		JLabel jl4 = new JLabel("Trending location: ");
+		locationBox = getLocationsCombo();
 		addButton("Search!", SEARCH, listener,  buttonPanel);
 		addButton("Long Time Search!", SEARCH_LONG, listener, buttonPanel);
+		buttonPanel.add(jl4);
+		buttonPanel.add(locationBox);	
 		addButton("Search Trending!", SEARCH_TRENDING, listener, buttonPanel);
 		addButton("Clear !", CLEAR, listener, buttonPanel);
 		
 		return  buttonPanel;
 	}
-	
 	
 	private void addButton(String name, String caughtAction, ActionListener listener, JPanel container) {
 		JButton button = new JButton(name);
@@ -268,11 +281,21 @@ public class Main extends JFrame {
 		container.add(button);		
 	}
 	
-	private JTextField createTextBox() {
+	private JTextField createTextBox(int dim) {
 		JTextField res = new JTextField();
 		res.setColumns(10);
-		res.setSize(new Dimension(80, 20));
+		res.setSize(new Dimension(dim, 25));
 		return res;
+	}
+
+	private JPanel getResultBox() {
+		JPanel resultPanel = new JPanel();
+		resultBox = new JTextArea();
+		resultBox.setSize(BOARDX - 10, BOARDY - BUTTONY * 2);
+		resultBox.setColumns(90);
+		resultBox.setRows(31);
+		resultPanel.add(resultBox);
+		return resultPanel;
 	}
 	
 	public static void main(String[] args) {
