@@ -35,7 +35,6 @@ public class Main extends JFrame {
 	private final static int BUTTONY 	= 70;	
 	
 	private final static String SEARCH  = "SEARCH";
-	private final static String SEARCH_USER  = "SEARCH_USER";
 	private final static String SEARCH_LONG = "SEARCH_LONG";
 	private final static String SEARCH_TRENDING = "SEARCH_TRENDING";
 	private final static String CLEAR   = "CLEAR";

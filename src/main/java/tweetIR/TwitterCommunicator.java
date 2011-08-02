@@ -29,8 +29,8 @@ import utils.Constants;
 
 public class TwitterCommunicator {
 	
-	private final static String USER = "IGenunelyRock";
-	private final static String PASS = "mariamatevarocks";
+	private final static String USER = "mmateva";
+	private final static String PASS = "heartbeatit";
 	
 	/** 
 	 * Searches a string in current strings.

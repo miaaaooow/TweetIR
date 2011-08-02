@@ -43,12 +43,12 @@ public class LuceneIndexer {
 	
 	public static final String[] ENGLISH_STOP_WORDS = {
 		"a", "an", "and", "are", "as", "at", "be", "but", "by",
-		"for", "http", "if", "in", "into", "is", "it",
+		"for", "http", "if", "in", "into", "is", "it", "me", "mine", "my",
 		"no", "not", "of", "on", "or", "rt", "so", "such",
-		"that", "the", "their", "then", "there", "these",
-		"they", "this", "to", "was", "will", "with"
+		"that", "the", "their", "then", "there", "these", "ur",
+		"they", "this", "to", "was", "what", "will", "with", "you", "your"
 	};
-	// added by me: rt, http, so
+	// added by me: rt, http, so, what, you, your, me, mine, my, ur
 	
 	private static final String FIELD_NAME_PATH     = "path";
 	private static final String FIELD_NAME_CONTENTS = "contents";
