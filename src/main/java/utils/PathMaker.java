@@ -1,14 +1,22 @@
 package utils;
+/**
+ * @author mateva
+ * 
+ * A utility for path creation. To be improved.
+ */
 
 public class PathMaker {
+	private static String separator = "/";
 	
 	public static String path(String path, String dir) {
-		return path + "/" + dir;
+		return path + separator + dir;
 	}
 	
 	public static String userPath(String path, String dir) {
-		return path + "/USER_" + dir;
+		return path + separator + "USER_" + dir;
 	}
+	
+	
 	
     /**
      * This is to normalize paths, so that they do not start with # of @.

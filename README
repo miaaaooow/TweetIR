@@ -1,0 +1,25 @@
+TweetIR - University Course Project
+
+University course: Information Retrieval
+Master's programme: Artificial Intelligence
+Leader: Assoc. Prof. Ivan Koichev
+Faculty: FMI
+University: Sofia University, Sofia, Bulgaria
+Date: July, 2011
+Author: Maria Mateva
+
+
+To run the project, simply run the 
+/src/java/main/TweetIR/Main.java file.
+
+
+The project uses Lucene 3.2.0 libs and Twitter4J 2.2.2 libs:
+1. http://lucene.apache.org/java/3_2_0/
+2. http://twitter4j.org/en/code-examples.html
+
+All other source in this project is written my the author.
+
+Please contact me at mateva dot maria in gmail if you need to use any part of this software.
+In most cases a simple citation would do.
+
+

@@ -42,13 +42,13 @@ public class LuceneIndexer {
 	public static final Version LUCENE_2_9_4 = Version.LUCENE_29;
 	
 	public static final String[] ENGLISH_STOP_WORDS = {
-		"a", "an", "and", "are", "as", "at", "be", "but", "by",
-		"for", "http", "if", "in", "into", "is", "it", "me", "mine", "my",
+		"a", "an", "and", "are", "as", "at", "be", "but", "by", "el", 
+		"for", "http", "if", "in", "into", "is", "it", "la", "lol", "me", "mine", "my",
 		"no", "not", "of", "on", "or", "rt", "so", "such",
-		"that", "the", "their", "then", "there", "these", "ur",
+		"t.co", "that", "the", "their", "then", "there", "these", "ur",
 		"they", "this", "to", "was", "what", "will", "with", "you", "your"
 	};
-	// added by me: rt, http, so, what, you, your, me, mine, my, ur
+	// added by me: rt, http, t.co, so, what, you, your, me, mine, my, ur, el, la, lol
 	
 	private static final String FIELD_NAME_PATH     = "path";
 	private static final String FIELD_NAME_CONTENTS = "contents";

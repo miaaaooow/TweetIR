@@ -29,8 +29,8 @@ import utils.Constants;
 
 public class TwitterCommunicator {
 	
-	private final static String USER = "mmateva";
-	private final static String PASS = "heartbeatit";
+	private final static String USER = "IGenuinelyRock";
+	private final static String PASS = "mariamatevarocks";
 	
 	/** 
 	 * Searches a string in current strings.
@@ -70,6 +70,7 @@ public class TwitterCommunicator {
 		try {
 			ResponseList<Status> statuses = twitter.getUserTimeline(username);
 			Iterator<Status> it = statuses.iterator();
+			result = new String[statuses.size()];
 			int i = 0;
 			while(it.hasNext()) {
 				result[i] = it.next().getText();

@@ -12,6 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -24,6 +27,7 @@ import javax.swing.JTextField;
 
 import twitter4j.Location;
 import utils.Constants;
+import utils.ResultWriter;
 
 public class Main extends JFrame {
 	
@@ -51,12 +55,14 @@ public class Main extends JFrame {
 	private int worldwideIndex = Constants.DEFAULT_LOCATION;
 	
 	private boolean startMode = true;
+	private ResultWriter resultWriter;
 	
 	
 	public Main() {
 		super("TweetIR - retrieve Tweeter's info :)");
 		setLocation(150, 100);
-
+		resultWriter = new ResultWriter();
+		
 	    addWindowListener(new WindowAdapter() {
 	        public void windowClosing(WindowEvent e) {
 	          System.exit(0);
@@ -146,15 +152,19 @@ public class Main extends JFrame {
 	 * @param corresopdings - results from the search
 	 */
 	public void screenLocatedTrends (String [] trends, String [][] corresopdings) {
-		int len = trends.length;
-		String result = "Trending topics for location: " + trends[len - 1];
+		int len = trends.length;		
+		String date = getDateStamp();
+		String result = "Trending topics for location: " + trends[len - 1] + " finished on: " + date;
+		
 		for (int i = 0; i < len - 1; i++) {
 			result += "\n Topic " + (i+1) + ": " + trends[i] + " --> "; 
 			for (String cor: corresopdings[i]) {
 				result += cor + ", ";
 			}
 		}
+		
 		resultBox.setText(result);
+		resultWriter.writeResults(Constants.TRENDING_SUBDIRECTORY, date, trends[len - 1], "trending", result);
 	}
 	
 	/**
@@ -164,14 +174,27 @@ public class Main extends JFrame {
 	 * @param results
 	 */
 	public void screenCustomSearch (String searchString, String[] results) {
-		String result = "Search string: " + searchString + "\nResults:";
+		String date = getDateStamp();
+		String result = "Search string: " + searchString +  " finished on: " + date + "\nResults:";
 		for (int i = 0; i < results.length; i++) {
 			result += "\n --> " + results[i]; 
 		}
 		resultBox.setText(result);
+		resultWriter.writeResults(Constants.CUSTOM_SUBDIRECTORY, date, searchString, "custom", result);
 	}
 	
 
+	private static String getDateStamp ()  {
+		 Calendar calendar = new GregorianCalendar();
+		 int hour = calendar.get(Calendar.HOUR_OF_DAY);
+		 int min = calendar.get(Calendar.MINUTE);
+		 int sec = calendar.get(Calendar.SECOND);
+		 int day = calendar.get(Calendar.DAY_OF_MONTH);
+		 int month = calendar.get(Calendar.MONTH);
+		 int year = calendar.get(Calendar.YEAR);
+		 return  year + "_" + month + "_" + day + "_" + hour + ":" + min + ":" + sec; 
+	}
+	
 	public void clearFields () {
 		System.out.println("CLEAR!");	
 		searchBox.setText("");
